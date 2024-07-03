@@ -1,26 +1,63 @@
-import React from "react";
-
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
-
-//create your first component
+import React, {useState} from "react";
+import 'bootstrap/dist/css/bootstrap.min.css';
 const Home = () => {
-	return (
-		<div className="text-center">
-			<h1 className="text-center mt-5">Hello Rigo!</h1>
-			<p>
-				<img src={rigoImage} />
-			</p>
-			<a href="#" className="btn btn-success">
-				If you see this green button... bootstrap is working...
-			</a>
-			<p>
-				Made by{" "}
-				<a href="http://www.4geeksacademy.com">4Geeks Academy</a>, with
-				love!
-			</p>
-		</div>
-	);
-};
+	const [todoList, setTodoList] = useState(["Make the bed", "Wash my hands", "Eat", "Walk the dog"]);
+	const [valorInput, setValorInput] = useState("");
+	const [hoveredIndex, setHoveredIndex] = useState(null);	
 
+	const handleChange = (e) => {		
+		const newValue = e.target.value;
+		setValorInput(newValue);
+	};
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		const newTodoList = [...todoList, valorInput];		
+		setTodoList(newTodoList);
+		setValorInput("");
+	};
+	console.log(todoList);
+
+	const handleMouseEnter = (index) => {
+		setHoveredIndex(index);		
+	}
+	const handleMouseLeave = () => {
+		setHoveredIndex(null);
+	};
+
+	const handleOnclick = (index) =>{
+		const eliminarElemento = [...todoList];
+		eliminarElemento.splice(index, 1);
+		setTodoList(eliminarElemento);
+		}
+
+	return (
+	<div className="bg-light d-flex flex-column justify-content-start align-items-center min-vh-100">
+		<h1 className="display-3 text-danger text-opacity-25">todos</h1>
+		<div className="card bg-light rounded-0 shadow w-50">
+			<div className="card-body text-justify">
+				<form onSubmit={handleSubmit}>
+					<input className="lead border-0 m-2 p-2 w-75" type="text" placeholder="What needs to be done?" value={valorInput} onChange={handleChange}/>
+				</form>
+				<ul className="lead list-group list-group-flush list-unstyled">
+					{todoList.map((elemento, index) => (
+						<li className="d-flex justify-content-between m-1 list-group-item bg-light" key={index} onMouseEnter={() => handleMouseEnter(index)}onMouseLeave={handleMouseLeave}>
+							{elemento}
+							{hoveredIndex === index && (<span><button className="border-0 bg-light text-danger" onClick={()=>handleOnclick(index)}>x</button></span>)}
+						</li>
+					))}	
+				</ul>
+				{todoList.length > 0 && (
+					<p className="lead fs-6">{todoList.length} items left</p>
+                )}			  
+				{todoList.length === 0 &&(
+					<p className="lead fs-6">No hay tareas, añadir tareas.</p>
+				)}
+				
+			</div>
+	  	</div>
+	</div>
+
+	);	
+};
 export default Home;
